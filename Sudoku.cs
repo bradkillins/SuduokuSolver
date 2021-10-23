@@ -12,6 +12,12 @@ namespace SudokuChallenge
     {
         const int SIZE = 9;
 
+        /// <summary>
+        /// Sets up a list of Lables to be used as the display for the 9 x 9 gameboard.
+        /// </summary>
+        /// <param name="form">The form in which the gameboard will be loaded.</param>
+        /// <param name="panel">The panel that dictakes the size and location of the gameboard.</param>
+        /// <param name="cells">The list of Lables that represent the cells of the board.</param>
         public void SetupBoard(Form form, Panel panel, List<Label> cells)
         {
             const int OFFSET = 2; //number of pixels to offset the grid to the right
@@ -46,6 +52,11 @@ namespace SudokuChallenge
             }
         }
 
+        /// <summary>
+        /// Updates the gameboard's list of lables to display the digits in a 9x9 int array. 
+        /// </summary>
+        /// <param name="cells">The list of labels that represent the gameboard display.</param>
+        /// <param name="newBoard">The 9x9 int array that has the new set of digits to display.</param>
         public void UpdateBoard(List<Label> cells, int[,] newBoard)
         {
             int index = 0;
@@ -92,7 +103,7 @@ namespace SudokuChallenge
         /// Takes a partially complete Sudoku puzzle in the form of a 2d 9x9 int array and 
         /// Solves it if possible. 0s are treated as blank cells.
         /// </summary>
-        /// <param name="inputBoard">The partially complete 9x9 int array</param>
+        /// <param name="inputBoard">The partially complete 9x9 int array.</param>
         /// <param name="solvedBoard">The 2d 9x9 array to store the solution.</param>
         /// <returns>Ture if a valid solution was found.</returns>
         public bool Solve(int[,] inputBoard, int[,] solvedBoard)
@@ -102,18 +113,18 @@ namespace SudokuChallenge
         }
 
         /// <summary>
-        /// 
+        /// Recursivly solves a sudoku puzzle. 
         /// </summary>
-        /// <param name="inputBoard"></param>
-        /// <param name="solvedBoard"></param>
-        /// <param name="cell"></param>
-        /// <returns></returns>
+        /// <param name="inputBoard">The partially complete 9x9 int array.</param>
+        /// <param name="solvedBoard">The 2d 9x9 array to store the solution.</param>
+        /// <param name="cell">The cell number currently being examinied. 0 to 80 cells in a 9x9 grid.</param>
+        /// <returns>True if a valid solution is found.</returns>
         bool SolveRecursive(int[,] inputBoard, int[,] solvedBoard, int cell) 
         {
             int r = cell / SIZE;
             int c = cell % SIZE;
             
-            //check if solved
+            //should only reach the 81st cell if a solution hhas been found
             if (cell == SIZE * SIZE) return true; 
 
             //check if current cell is an answer from the input board then skip accordingly
@@ -125,15 +136,26 @@ namespace SudokuChallenge
             {
                 if (ValidCell(solvedBoard, cell, i))
                 {
+                    //assign the current number in the loop then recursively check 
+                    //if the remaining cells in the board are vaild, otherwise come back
+                    //and increase this cell and check again
                     solvedBoard[r, c] = i;
                     if (SolveRecursive(inputBoard, solvedBoard, cell + 1)) return true;
                 }
                 //reset to zero if not valid cell 
                 solvedBoard[r, c] = 0;
             }
+            //if no digits from 1-9 are valid then there is no solution to the puzzle
             return false;
         }
 
+        /// <summary>
+        /// Checks if a number could be inserted into a cell in the puzzle.
+        /// </summary>
+        /// <param name="board">The puzzle to check.</param>
+        /// <param name="cell">The cell to check.</param>
+        /// <param name="num">The number to be inserted into the cell.</param>
+        /// <returns></returns>
         bool ValidCell(int[,] board, int cell, int num)
         {
             int r = cell / 9;
@@ -167,6 +189,9 @@ namespace SudokuChallenge
             return true;
         }
         
+        /// <summary>
+        /// A helper function that copies one 2d array to another.
+        /// </summary>
         void CopyArray(int[,] copyFrom, int[,] copyTo)
         {
             for (int r = 0; r < SIZE; r++)
